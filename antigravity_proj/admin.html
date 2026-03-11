@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B M Tyres | Admin Quotation Generator</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="admin-body">
+
+    <!-- Admin Navigation -->
+    <nav class="navbar admin-navbar">
+        <div class="navbar-container container">
+            <a href="index.html" class="logo">
+                <span class="logo-accent">B M</span> Tyres <span class="admin-badge">Admin</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="btn btn-secondary"><i class="ph ph-arrow-left"></i> Back to Site</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container admin-container">
+        <div class="admin-header">
+            <h2>Generate Quotation</h2>
+            <p>Select tyre specifications to generate a customer quotation.</p>
+        </div>
+
+        <div class="admin-grid">
+            <!-- Left Panel: Selection Form -->
+            <div class="admin-card selection-panel">
+                <h3>Quotation Details</h3>
+                
+                <div class="form-group pb-3" style="border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <label for="customer-input">Customer Name / Vehicle No.</label>
+                    <input type="text" id="customer-input" class="form-control" placeholder="E.g., John Doe - MH 15 AB 1234..." style="margin-bottom: 1rem;">
+                    
+                    <label for="customer-phone">WhatsApp Number</label>
+                    <input type="tel" id="customer-phone" class="form-control" placeholder="10-digit mobile number">
+                </div>
+
+                <h3>Add New Item</h3>
+                
+                <div class="form-group">
+                    <label for="brand-select">Brand</label>
+                    <select id="brand-select" class="form-control">
+                        <option value="">-- Select Brand --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="size-select">Size</label>
+                    <select id="size-select" class="form-control" disabled>
+                        <option value="">-- Select Size --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pattern-select">Pattern</label>
+                    <select id="pattern-select" class="form-control" disabled>
+                        <option value="">-- Select Pattern --</option>
+                    </select>
+                </div>
+                
+                <div class="price-preview" id="price-preview" style="display: none;">
+                    <div class="price-row">
+                        <span>Base Rate (Internal):</span>
+                        <strong id="preview-base">₹0</strong>
+                    </div>
+                    <div class="price-row highlight-price">
+                        <span>Customer Rate (+10%):</span>
+                        <strong id="preview-customer">₹0</strong>
+                    </div>
+                </div>
+
+                <div class="form-group quantity-group" style="display: none;" id="quantity-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" value="1" min="1" max="100" class="form-control">
+                </div>
+
+                <button class="btn btn-primary w-100 mt-4" id="add-item-btn" disabled>
+                    <i class="ph ph-plus-circle"></i> Add to Quotation
+                </button>
+            </div>
+
+            <!-- Right Panel: Quotation Preview -->
+            <div class="admin-card quotation-panel" id="printable-quotation">
+                <div class="quotation-header">
+                    <div class="q-brand">
+                        <h2><span class="logo-accent">B M</span> Tyres</h2>
+                        <p>Shop no. 4, Ashish Heights,<br>Deepali Nagar, Nashik</p>
+                        <p>Call: +91 83294 10321</p>
+                    </div>
+                    <div class="q-meta">
+                        <h2>QUOTATION</h2>
+                        <p>Date: <span id="q-date"></span></p>
+                    </div>
+                </div>
+
+                <div class="q-customer-info" style="margin-top: 2rem; margin-bottom: 2rem;">
+                    <strong style="font-size: 0.875rem; color: #555; text-transform: uppercase;">Quotation For:</strong>
+                    <div id="q-customer-display" style="font-size: 1.125rem; font-weight: 600; font-family: var(--font-heading); margin-top: 0.25rem;">N/A</div>
+                </div>
+
+                <table class="q-table" id="q-table">
+                    <thead>
+                        <tr>
+                            <th>Item Description (Brand, Size, Pattern)</th>
+                            <th>Qty</th>
+                            <th>Unit Rate</th>
+                            <th>Total Amount</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="q-tbody">
+                        <tr class="empty-state">
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">No items added yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="q-summary">
+                    <div class="q-row total-row">
+                        <span>Total Estimate:</span>
+                        <strong id="q-grand-total">₹0</strong>
+                    </div>
+                </div>
+
+                <div class="q-terms" style="margin-top: 4rem; border-top: 1px solid #ddd; padding-top: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem;">Terms & Conditions</h4>
+                    <ol style="margin-left: 1.25rem; font-size: 0.75rem; color: #555; line-height: 1.6;">
+                        <li>Quotation is valid for 7 days from the date of issue.</li>
+                        <li>Prices are inclusive of all applicable taxes.</li>
+                        <li>Wheel alignment, balancing, and weights will be charged extra unless specifically mentioned.</li>
+                        <li>Warranty claims are subject to the manufacturer's terms and conditions.</li>
+                        <li>Goods once sold will not be taken back or exchanged.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-actions" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: flex-end;">
+            <button class="btn btn-large" style="background-color: #25d366; color: white; border: none; font-weight: 600;" id="whatsapp-share-btn">
+                <i class="ph-fill ph-whatsapp-logo"></i> Send on WhatsApp
+            </button>
+            <button class="btn btn-secondary btn-large" onclick="window.print()">
+                <i class="ph ph-printer"></i> Print Quotation
+            </button>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
